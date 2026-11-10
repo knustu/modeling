@@ -1,0 +1,13 @@
+{
+  "mode": "Synthetic development only; real CLI is disabled until separately authorized",
+  "sites": ["site_id", "capacity_kw"],
+  "composition": ["site_id", "group"],
+  "plant_table": ["site_id", "ts", "forecast_kwh", "actual_kwh", "model_id", "forecast_round", "validation_fold", "decision_at", "trained_through", "prediction_kind", "horizon_hours"],
+  "manifest": {"coverage": "Explicit site IDs and expected hourly timestamp range per model/round/fold", "provenance": "Immutable forecast hash, model training cutoff, decision schedule, prediction_kind=oos or synthetic_oos, fixed grouping hashes", "holdout": "Excluded by default, not a source of thresholds or model selection"},
+  "weather": ["site_id", "ts", "forecast_round", "decision_at", "issued_at", "available_at", "configured numeric fields"],
+  "smp": ["ts", "smp"],
+  "time": "Timezone-aware KST-compatible hourly interval END; textual +09:00 source convention verified locally before historical use",
+  "phase2_mapping": {"energy_kwh": "actual_kwh", "model": "model_id", "split": "validation_fold"},
+  "unresolved": "Phase 2 CSVs do not alone establish decision_at, trained_through, forecast_round or horizon. A separately verified local manifest is mandatory. Never invent these fields or derive plant predictions from group predictions.",
+  "direct_groups": "May be validated against plant sums only when lineage says plant_aggregation; direct-group models must be analyzed as direct groups and cannot supply plant cancellation. Direct-only runner is not implemented in this draft."
+}

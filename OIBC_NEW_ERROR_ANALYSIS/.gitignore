@@ -1,0 +1,15 @@
+data/
+outputs/
+reports/
+dashboard/
+local_*.json
+*.csv
+*.parquet
+*.html
+*.png
+*.bak
+*.log
+.env*
+.venv/
+__pycache__/
+*.pyc

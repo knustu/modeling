@@ -1,0 +1,4 @@
+# Installed-package inventory only. No automatic installation.
+numpy
+pandas
+# Asia/Seoul timezone support must already exist (Windows may need tzdata).
