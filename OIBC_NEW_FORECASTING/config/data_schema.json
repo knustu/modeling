@@ -1,0 +1,14 @@
+{
+  "status": "Canonical development interface, not an assertion about official source schemas",
+  "sites": ["site_id", "capacity_kw", "wa_station", "wb_station"],
+  "targets": ["site_id", "ts", "decision_at"],
+  "labels": ["site_id", "ts", "energy_kwh", "label_available_at"],
+  "weather": ["station_id", "ts", "issued_at", "available_at", "configured provider variables"],
+  "grouping": ["site_id", "group"],
+  "smp": ["ts", "smp"],
+  "time": "Timezone-aware ISO 8601 timestamps; converted to KST. Numeric epoch and naive timestamps are rejected. Canonical ts is interval-end. decision_at must come from a locally verified issuance schedule.",
+  "unit_conversion": "Canonical value = source value * configured scale + configured offset. Defaults describe synthetic fixtures only. Real provider units require official verification.",
+  "missing_weather": "Missing row retained as NaN and indicator; train-fold median imputation; entirely missing training column uses zero plus indicator.",
+  "duplicates": "Duplicate site-hour labels/targets, station-target-issue forecasts, and group-hour outputs are errors.",
+  "official_documents": "Not located or supplied; real execution deliberately disabled. No real input files are read by the CLI."
+}

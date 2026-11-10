@@ -1,0 +1,19 @@
+{
+  "seed": 2026,
+  "expected_sites": 253,
+  "minimum_capacity_kw": 20000.0,
+  "label_cutoff": "2025-06-01T00:00:00+09:00",
+  "target_normalization": true,
+  "ridge_alpha": 10.0,
+  "candidate_iterations": 30,
+  "batch_size": 8192,
+  "threads": 1,
+  "peak_hours": null,
+  "daytime_diagnostic_hours": [7,8,9,10,11,12,13,14,15,16,17,18],
+  "official_rules_verified": false,
+  "real_execution_enabled": false,
+  "providers": {
+    "wa": {"station_column": "wa_station", "fields": {"radiation": {"column": "radiation", "unit": "W/m2", "scale": 1.0, "offset": 0.0}}},
+    "wb": {"station_column": "wb_station", "fields": {"temperature": {"column": "temperature", "unit": "degC", "scale": 1.0, "offset": -273.15}}}
+  }
+}

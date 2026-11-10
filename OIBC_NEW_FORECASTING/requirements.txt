@@ -1,0 +1,6 @@
+# Inventory only. Never install packages automatically.
+numpy
+pandas
+scikit-learn
+# Windows may require an already-installed tzdata for Asia/Seoul.
+# Real source Parquet adapters would need existing pyarrow or fastparquet.
