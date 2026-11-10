@@ -1,0 +1,22 @@
+{
+  "version": "0.1.0",
+  "seed": 2026,
+  "expected_sites": 253,
+  "minimum_capacity_kw": 20000.0,
+  "iterations": 25,
+  "swap_trials": 100,
+  "starts": 3,
+  "annealing_temperature": 5.0,
+  "peak_hours": null,
+  "official_rules_verified": false,
+  "maximum_additive_kwh": 100.0,
+  "alpha_grid": [0.9,0.95,1.0,1.05,1.1],
+  "ensemble_grid": [0.0,0.25,0.5,0.75,1.0],
+  "minimum_cell_hours": 24,
+  "bootstrap_replicates": 300,
+  "block_days": [1,7],
+  "minimum_bootstrap_blocks": 4,
+  "relative_selection_margin": 0.01,
+  "release_holdout": false,
+  "real_execution_enabled": false
+}

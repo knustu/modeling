@@ -1,0 +1,12 @@
+outputs/
+data/
+models/
+local_*.json
+*.csv
+*.parquet
+*.html
+*.png
+*.bak
+__pycache__/
+*.pyc
+.env*

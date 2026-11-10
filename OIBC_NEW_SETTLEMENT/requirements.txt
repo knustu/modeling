@@ -1,0 +1,4 @@
+# Installed package inventory only; never install automatically.
+numpy
+pandas
+# Existing Asia/Seoul timezone database required on Windows.

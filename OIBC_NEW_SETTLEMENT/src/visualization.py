@@ -1,0 +1,22 @@
+import json
+from pathlib import Path
+
+
+def dashboard(path,records,series,logs,manifest,sites,reference,optimized):
+    data={'records':records,'series':series,'logs':logs,'manifest':manifest,'plants':[
+        {'site_id':row.site_id,'capacity_kw':float(row.capacity_kw),'reference':'G1' if reference[i] else 'G2',
+         'optimized':'G1' if optimized[i] else 'G2'} for i,row in enumerate(sites.itertuples())]}
+    html='''<!doctype html><html lang="en"><meta charset="utf-8"><title>SYNTHETIC optimization</title>
+<style>body{font:15px system-ui;margin:24px}canvas{width:100%;height:260px;border:1px solid #aaa}table{border-collapse:collapse}td,th{padding:5px;border:1px solid #ccc}.scroll{overflow:auto}select,input,button{padding:6px;margin:4px}pre{white-space:pre-wrap}</style>
+<h1>SYNTHETIC Phase 4 optimization prototype</h1><p>Not competition performance. No real inference or submission. Charts use validation fixtures; holdout is not used for selection.</p>
+<label>Configuration A<select id="a"></select></label><label>Configuration B<select id="b"></select></label><label>Group<select id="group"><option>G1</option><option>G2</option></select></label><input id="from" type="date"><input id="through" type="date"><button id="png">Export PNG</button>
+<h2>Actual and corrected forecast (kWh)</h2><canvas id="forecast"></canvas><h2>Historical cumulative penalty: A minus B</h2><canvas id="difference"></canvas><h2>Grouping convergence (accepted moves, development W)</h2><canvas id="convergence"></canvas>
+<h2>Candidate metrics, model/correction identity and A–F comparison</h2><div class="scroll" id="table"></div><h2>Assignment/capacity inspection</h2><div class="scroll" id="plants"></div><h2>Candidate and integration status</h2><pre id="metadata"></pre>
+<p>Prototype limitations: no monthly/peak/uncertainty charts or generic model metadata browser yet. Full results and intervals are in CSV/JSON. No mapped coordinates.</p>
+<script>const D=__DATA__;for(const id of ['a','b'])D.records.forEach(r=>{const o=document.createElement('option');o.textContent=r.candidate_id;document.getElementById(id).append(o)});const dates=D.series.map(r=>r.ts.slice(0,10)).sort();document.getElementById('from').value=dates[0];document.getElementById('through').value=dates[dates.length-1];
+function plot(id,series){const e=document.getElementById(id);e.width=1100;e.height=280;const c=e.getContext('2d');c.fillStyle='white';c.fillRect(0,0,1100,280);const v=[0,...series.flat()],lo=Math.min(...v),hi=Math.max(...v),span=hi-lo||1;c.fillStyle='#222';c.fillText('min '+lo.toFixed(3)+' / max '+hi.toFixed(3),15,15);series.forEach((s,k)=>{c.strokeStyle=['#2563eb','#d97706'][k%2];c.beginPath();s.forEach((x,i)=>{const a=40+i*1020/Math.max(1,s.length-1),b=245-(x-lo)/span*210;if(i)c.lineTo(a,b);else c.moveTo(a,b)});c.stroke()})}
+function rows(id){return D.series.filter(r=>r.candidate_id===document.getElementById(id).value&&r.group===document.getElementById('group').value&&r.ts.slice(0,10)>=document.getElementById('from').value&&r.ts.slice(0,10)<=document.getElementById('through').value)}
+function render(){const a=rows('a'),b=rows('b');plot('forecast',[a.map(r=>r.actual_kwh),a.map(r=>r.forecast_kwh)]);let total=0;plot('difference',[a.map((r,i)=>total+=r.penalty-(b[i]?.penalty??0))]);plot('convergence',D.logs.slice(0,2).map(r=>[r.initial_W,...r.moves.map(v=>v.W)]));document.getElementById('metadata').textContent=JSON.stringify(D.manifest,null,2)}
+function table(id,rows,keys){const t=document.createElement('table'),head=document.createElement('tr');keys.forEach(k=>{const h=document.createElement('th');h.textContent=k;head.append(h)});t.append(head);rows.forEach(r=>{const tr=document.createElement('tr');keys.forEach(k=>{const td=document.createElement('td');td.textContent=r[k]===null?'unavailable':String(r[k]);tr.append(td)});t.append(tr)});document.getElementById(id).append(t)}
+table('table',D.records,['candidate_id','W','delta_W','relative_W_improvement','G1_W','G2_W','mae','bias','worst_day_W','sample_hours','version']);table('plants',D.plants,['site_id','capacity_kw','reference','optimized']);for(const e of document.querySelectorAll('select,input'))e.addEventListener('change',render);document.getElementById('png').onclick=()=>{const a=document.createElement('a');a.href=document.getElementById('forecast').toDataURL('image/png');a.download='synthetic_optimization.png';a.click()};render();</script></html>'''
+    Path(path).write_text(html.replace('__DATA__',json.dumps(data,allow_nan=False).replace('<','\\u003c')),encoding='utf-8')
