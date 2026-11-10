@@ -31,6 +31,24 @@ def timestamps(values,hourly=False):
     return pd.DatetimeIndex(result)
 
 
+def continuous_hourly_grid(values):
+    """整数内部値の単位ではなく実際の経過時間で検証します。"""
+    grid=timestamps(values,True)
+    if not len(grid) or grid.duplicated().any():
+        raise DiagnosticError('Invalid expected grid.')
+    grid=grid.sort_values()
+    if len(grid)>1 and not ((grid[1:]-grid[:-1])==pd.Timedelta(hours=1)).all():
+        raise DiagnosticError('Expected grid must be continuous hourly for this partition.')
+    return grid
+
+
+def same_time_grid(left,right):
+    # asi8の単位はpandasの時間解像度によって異なるため直接比較しません。
+    a=timestamps(left,True).sort_values().tz_convert('UTC')
+    b=timestamps(right,True).sort_values().tz_convert('UTC')
+    return len(a)==len(b) and bool((a==b).all())
+
+
 def numbers(series,allow_missing=False):
     x=pd.to_numeric(series,errors='coerce').to_numpy(float)
     if (series.notna().to_numpy() & np.isnan(x)).any() or np.isinf(x).any():
@@ -82,17 +100,12 @@ def validate_plant(frame,sites,cfg,expected_grid,synthetic=False):
     for col in ['forecast_kwh','actual_kwh']:
         f[col]=numbers(f[col],True)
         if (f[col].dropna()<0).any(): raise DiagnosticError('Negative energy.')
-    grid=timestamps(expected_grid,True)
-    if not len(grid) or grid.duplicated().any(): raise DiagnosticError('Invalid expected grid.')
-    grid=grid.sort_values()
-    if len(grid)>1 and not (np.diff(grid.asi8)==3600*10**9).all():
-        raise DiagnosticError('Expected grid must be continuous hourly for this partition.')
+    grid=continuous_hourly_grid(expected_grid)
     for _,g in f.groupby(KEY,sort=True):
-        if len(g)!=len(sites)*len(grid) or not np.array_equal(np.sort(g.ts.unique().asi8),grid.asi8):
+        if len(g)!=len(sites)*len(grid) or not same_time_grid(g.ts.unique(),grid):
             raise DiagnosticError('Missing/extra rows: explicit complete site-hour grid required.')
         if not g.groupby('ts').site_id.nunique().eq(len(sites)).all(): raise DiagnosticError('Incomplete site-hour keys.')
         if g.groupby('ts').decision_at.nunique().gt(1).any(): raise DiagnosticError('Inconsistent decision within round.')
-    # All models/rounds must refer to exactly the same actuals, including missingness.
     check=f.groupby(['site_id','ts']).actual_kwh.agg(['min','max','count','size'])
     if ((check['max']-check['min']).abs()>1e-9).any() or ((check['count']!=0)&(check['count']!=check['size'])).any():
         raise DiagnosticError('Actual reference differs across comparisons.')
