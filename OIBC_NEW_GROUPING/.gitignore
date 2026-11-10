@@ -1,0 +1,24 @@
+# 실제 데이터 및 파생 결과는 비공개 저장소에도 커밋하지 않습니다.
+data/
+outputs/
+reports/
+local_config*.json
+*.csv
+*.parquet
+*.pq
+*.xlsx
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.joblib
+*.html
+*.svg
+*.png
+*.log
+.env
+.env.*
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/

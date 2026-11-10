@@ -1,0 +1,22 @@
+{
+  "expected_sites": 253,
+  "minimum_capacity_kw": 20000.0,
+  "seed": 2026,
+  "cutoff_exclusive": "2025-06-01T00:00:00+09:00",
+  "timestamp_convention": null,
+  "naive_timezone": "Asia/Seoul",
+  "columns": {"site_id": "site_id", "capacity": "capacity_kw", "generation_site": "site_id", "timestamp": "ts", "energy": "energy"},
+  "energy_to_kwh": 1.0,
+  "duplicate_policy": "reject",
+  "daytime_hours": [7,8,9,10,11,12,13,14,15,16,17,18],
+  "minimum_feature_observations": 3,
+  "minimum_feature_site_fraction": 0.8,
+  "minimum_pair_overlap": 24,
+  "beam_width": 2000,
+  "max_iterations": 40,
+  "swap_trials": 500,
+  "random_starts": 3,
+  "capacity_weight": 1.0,
+  "profile_weight": 1.0,
+  "tolerance": 1e-12
+}

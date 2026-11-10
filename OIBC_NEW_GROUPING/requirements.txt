@@ -1,0 +1,6 @@
+# 설치 명령은 자동 실행하지 않습니다. 설치된 환경을 우선 사용하세요.
+numpy
+pandas
+# Windows에서 Asia/Seoul 시간대 DB가 없으면 tzdata가 필요합니다.
+# 실제 Parquet 입력에는 기존 pyarrow 또는 fastparquet가 필요합니다.
+# 미설치 패키지는 사용자의 명시적 허가 후에만 설치합니다.
